@@ -1,5 +1,6 @@
 package xyz.wolvesbaneacademy.selenium.tests;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -16,11 +17,16 @@ public class NavigationTest {
   @Test
   public void Navigation() {
 	  Assert.assertTrue(driver.getTitle().contains("Wolvesbane Academy"));
+	  try {
+		Browser.TakeScreenshot(driver, "HomePage.jpg");
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
   }
   @BeforeMethod
   public void beforeMethod() {
 	  try {
-		driver = Browser.Driver(new URL("http://localhost:4444/wd/hub/"), "chrome", "");
+		driver = Browser.Remote(new URL("http://localhost:4444/wd/hub/"), "chrome", "");
 		driver.navigate().to("http://www.wolvesbaneacademy.xyz/");
 		
 	} catch (MalformedURLException e) {
@@ -32,7 +38,8 @@ public class NavigationTest {
 
   @AfterMethod
   public void afterMethod() {
-	  Browser.Close(driver);
+	  driver.close();
+	  driver.quit();
   }
 
 }

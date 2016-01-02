@@ -47,7 +47,8 @@ public class ConnectingToTheGridTests {
 
   @AfterMethod
   public void afterMethod() {
-	  Browser.Close(driver);
+	  driver.close();
+	  driver.quit();
   }
 
 }
