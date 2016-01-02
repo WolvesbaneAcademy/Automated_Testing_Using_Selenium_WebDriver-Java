@@ -34,7 +34,7 @@ public class Browser {
     {
         return new InternetExplorerDriver();
     }
-    public static WebDriver Driver(URL driverHub, String browserName, String browserVersion)
+    public static WebDriver Remote(URL driverHub, String browserName, String browserVersion)
     {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         switch (browserName)
@@ -112,11 +112,6 @@ public class Browser {
         JavascriptExecutor jse = (JavascriptExecutor)driver;
         Object obj = jse.executeScript(jsCMD);
         return obj;
-    }
-
-    public static void Close(WebDriver driver)
-    {
-        driver.close();
     }
 
 }

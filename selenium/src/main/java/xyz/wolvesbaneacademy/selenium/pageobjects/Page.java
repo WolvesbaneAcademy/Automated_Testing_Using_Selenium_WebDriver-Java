@@ -216,7 +216,7 @@ public class Page {
 	 * @param timeOut
 	 * @return boolean
 	 */
-	public boolean isStale(WebElement webElement) {
+	public boolean isElementStale(WebElement webElement) {
 		boolean isStale = false;
 		try {
 			isStale = (new WebDriverWait(driver, timeOut)).until(ExpectedConditions.stalenessOf(webElement));
@@ -353,10 +353,38 @@ public class Page {
 	}
 
 	/**
+	 * Returns the page source as a string
+	 */
+	public String pageSource() {
+		return driver.getPageSource();
+	}
+	
+	/**
 	 * Refreshes the current page
 	 */
 	public void refreshPage() {
 		driver.navigate().refresh();
+	}
+
+    /**
+	 * Hovers the mouse over the element found by the locator
+	 * 
+	 * @param locator
+	 */
+    public void hoverOver(By locator)
+    {
+        Actions action = new Actions(driver);
+        action.moveToElement(getWhenVisible(locator)).build().perform();
+    }
+
+    /**
+	 * Emulates a context click on the provided web element
+	 * 
+	 * @param target
+	 */
+	public void contextClickOn(By locator) {
+		Actions action = new Actions(driver);
+		action.contextClick(getWhenVisible(locator)).build().perform();
 	}
 
 	/**
@@ -367,6 +395,16 @@ public class Page {
 	public void contextClickOn(WebElement target) {
 		Actions action = new Actions(driver);
 		action.contextClick(target).build().perform();
+	}
+
+    /**
+	 * Emulates a double click on the provided web element
+	 * 
+	 * @param target
+	 */
+	public void doubleClickOn(By locator) {
+		Actions action = new Actions(driver);
+		action.doubleClick(getWhenVisible(locator)).build().perform();
 	}
 
 	/**
