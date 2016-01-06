@@ -36,7 +36,7 @@ public class Page {
 	protected WebDriver driver;
 	protected String pageTitle;
 	protected String pageHandle;
-	protected int timeOut = 30;
+	protected int timeOut = 10;
 	
 	/**
 	 * This constructor accepts a WebDriver object and instantiates the
@@ -90,7 +90,7 @@ public class Page {
 	}
 
 	/**
-	 * Determines of the provided string is present in the title of the current page. Allows for specifying the amount
+	 * Determines if the provided string is present in the title of the current page. Allows for specifying the amount
 	 * of time to wait in seconds. If an error occurs and errCapture is true, a screenshot is saved to the Errors
 	 * folder.
 	 * 
@@ -132,6 +132,28 @@ public class Page {
 
 		try {
 			result = wait.until(ExpectedConditions.textToBePresentInElementLocated(locator, value));
+		} catch (TimeoutException toe) {
+			result = false;
+		}
+
+		return result;
+	}
+
+	/**
+	 * Checks for the specified text within the web element found using the provided locator Allows for specifying the
+	 * timeOut delay in seconds.
+	 * 
+	 * @param locator
+	 * @param value
+	 * @param timeOut
+	 * @return boolean
+	 */
+	public boolean isTextPresentInValue(By locator, String value) {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		boolean result = false;
+
+		try {
+			result = wait.until(ExpectedConditions.textToBePresentInElementValue(locator, value));
 		} catch (TimeoutException toe) {
 			result = false;
 		}
@@ -286,9 +308,23 @@ public class Page {
 	 * @param timeOut
 	 * @return List<WebElement>
 	 */
-	public List<WebElement> getAllElements(By locator) {
+	public List<WebElement> getAllWhenPresent(By locator) {
 		WebDriverWait wait = new WebDriverWait(driver, timeOut);
 		List<WebElement> elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+		return elements;
+	}
+
+	/**
+	 * Returns a list of web elements found in the DOM matching the provided locator Allows for specifying the timeOut
+	 * delay in seconds.
+	 * 
+	 * @param locator
+	 * @param timeOut
+	 * @return List<WebElement>
+	 */
+	public List<WebElement> getAllWhenVisible(By locator) {
+		WebDriverWait wait = new WebDriverWait(driver, timeOut);
+		List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
 		return elements;
 	}
 
@@ -322,34 +358,6 @@ public class Page {
 			WebElement retry = (new WebDriverWait(driver, timeOut)).until(ExpectedConditions.elementToBeClickable(locator));
 			retry.click();
 		}
-	}
-
-	/**
-	 * Clicks the specified WebElement and clicks it as soon as that option is available Allows for specifying the
-	 * timeOut delay in seconds. The element will be located again and the retried if the web element is stale
-	 * 
-	 * @param target
-	 * @param timeOut
-	 */
-	public void clickWhenReady(WebElement target) {
-		try {
-			target.click();
-		} catch (StaleElementReferenceException stale) {
-			WebElement retry = (new WebDriverWait(driver, timeOut)).until(ExpectedConditions.elementToBeClickable(target));
-			retry.click();
-		}
-	}
-	
-	
-	public boolean waitForText(By locator, String text) {
-		boolean present = false;
-		try {
-			present = (new WebDriverWait(driver, timeOut)).until(ExpectedConditions.textToBePresentInElementLocated(locator, text));
-		} catch (TimeoutException tme) {
-			present = false;
-		}
-		
-		return present;
 	}
 
 	/**
@@ -388,16 +396,6 @@ public class Page {
 	}
 
 	/**
-	 * Emulates a context click on the provided web element
-	 * 
-	 * @param target
-	 */
-	public void contextClickOn(WebElement target) {
-		Actions action = new Actions(driver);
-		action.contextClick(target).build().perform();
-	}
-
-    /**
 	 * Emulates a double click on the provided web element
 	 * 
 	 * @param target
@@ -422,22 +420,6 @@ public class Page {
 		switchWindows(pageHandle);
 	}
 	
-	/**
-	 * Locates an item on the current page with the id specified by itemName and
-	 * compares the value to itemValue
-	 * 
-	 * @param itemName
-	 * @param itemValue
-	 * @return boolean
-	 */
-	public boolean verifyItemValue(String itemName, String itemValue) {
-		WebElement item = getWhenPresent(By.id(itemName));
-		if (item.getText() == itemValue) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 	/**
 	 * Checks for an open Alert box
 	 * 
@@ -467,14 +449,6 @@ public class Page {
 		} else {
 			return null;
 		}
-	}
-	
-	/**
-	 * Switch to the specified browser window
-	 * @param handle
-	 */
-	public void switchWindows(String handle) {
-		driver.switchTo().window(handle);
 	}
 	
 	/**
