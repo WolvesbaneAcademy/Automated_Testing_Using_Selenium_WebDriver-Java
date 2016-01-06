@@ -64,10 +64,10 @@ public class Page {
 		this.pageHandle = driver.getWindowHandle();
 		
 		// Check that we're on the right page.
-		if (!isCurrent()) {
-			throw new IllegalStateException("Incorrect page loaded: found " + driver.getTitle() + " expected " + pageTitle);
-		} else {
+		if (isPageTitle(pageTitle)) {
 			this.pageTitle = pageTitle; 
+		} else {
+			throw new IllegalStateException("Incorrect page loaded: found " + driver.getTitle() + " expected " + pageTitle);
 		}
 	}
 
@@ -99,19 +99,17 @@ public class Page {
 	 * @param timeOut
 	 * @return boolean
 	 */
-	public boolean checkPageTitle(String pageTitle, boolean errCapture) {
+	public boolean isPageTitle(String pageTitle) {
 		boolean matchFound = false;
 		try {
 			matchFound = (new WebDriverWait(driver, timeOut)).until(ExpectedConditions.titleContains(pageTitle));
 		} catch (TimeoutException toe) {
-			if (errCapture) {
 				try {
 					Browser.CaptureError(driver, "timeOut" + new SimpleDateFormat("yyyyMMddhhmm").format(new Date()) + ".jpg");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				throw toe;
-			}
 		}
 
 		return matchFound;
@@ -406,18 +404,10 @@ public class Page {
 	}
 
 	/**
-	 * Determines if this is the current page by comparing the page titles
-	 * @return
-	 */
-	public boolean isCurrent() {
-		return checkPageTitle(pageTitle, true);
-	}
-
-	/**
 	 * Switches the browser window to the one this page was shown in when it was instantiated.
 	 */
 	public void switchToThisPage() {
-		switchWindows(pageHandle);
+		driver.switchTo().window(pageHandle);
 	}
 	
 	/**
