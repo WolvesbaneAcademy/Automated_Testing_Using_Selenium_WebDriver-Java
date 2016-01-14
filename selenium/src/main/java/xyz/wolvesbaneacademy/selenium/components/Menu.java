@@ -14,10 +14,10 @@ import xyz.wolvesbaneacademy.selenium.pageobjects.Page;
  *
  */
 public class Menu extends Page {
-	private static final By mnuArticles = By.linkText("Articles");
+	private static final By mnuArticles = By.linkText("ARTICLES");
 	private static final By mnuVideos = By.id("menu-item-197");
 	private static final By mnuCodeRepository = By.id("menu-item-179");
-	private static final By mnuGitLab = By.linkText("GitLab (Active)");
+	private static final By mnuGitLab = By.linkText("GITLAB (ACTIVE)");
 	
 	/**
 	 * 
@@ -26,17 +26,20 @@ public class Menu extends Page {
 		super(driver);
 	}
 	
-	public void clickArticles() {
+	public Page clickArticles() {
 		WebElement articles = this.getWhenClickable(mnuArticles);
 		articles.click();
+		return new Page(driver);
 	}
 	
-	public void clickVideos() {
+	public Page clickVideos() {
 		this.clickWhenReady(mnuVideos);
+		return new Page(driver);
 	}
 	
-	public void clickGitLab() {
+	public Page clickGitLab() {
 		this.hoverOver(mnuCodeRepository);
 		this.clickWhenReady(mnuGitLab);
+		return new Page(driver);
 	}
 }
